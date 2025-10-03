@@ -147,29 +147,24 @@
             {#if item.category}<span class="px-2 py-0.5 rounded bg-gray-100 border text-gray-600">{item.category}</span>{/if}
           </div>
         </div>
-        <div class="flex items-center gap-2">
-          <button class="button text-sm"
-            on:click={() => openEdit(item)}>
-            Editar
+        <div class="flex items-center gap-1">
+          <button class="button px-2 py-1" aria-label="Editar" title="Editar" on:click={() => openEdit(item)}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/>
+            </svg>
           </button>
-          <button class="button text-sm"
-            disabled={copyingId === item.id}
-            on:click={() => copyPassword(item)}>
+          <button class="button px-2 py-1" aria-label="Copiar" title="Copiar" disabled={copyingId === item.id} on:click={() => copyPassword(item)}>
             {#if copiedId === item.id}
-              Copiado
-            {:else if copyingId === item.id}
-              Copiando…
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
             {:else}
-              Copiar
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
             {/if}
           </button>
-          <button class="button text-sm bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
-            disabled={deletingId === item.id}
-            on:click={() => removeItem(item)}>
+          <button class="button px-2 py-1 bg-red-50 text-red-700 border-red-200 hover:bg-red-100" aria-label="Eliminar" title="Eliminar" disabled={deletingId === item.id} on:click={() => removeItem(item)}>
             {#if deletingId === item.id}
-              Eliminando…
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
             {:else}
-              Eliminar
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1z"/></svg>
             {/if}
           </button>
         </div>
