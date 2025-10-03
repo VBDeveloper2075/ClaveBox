@@ -4,6 +4,8 @@
   import type { VaultItem } from '../lib/types';
   import { session, vaultStore } from '../lib/state/store';
   import { v4 as uuidv4 } from 'uuid';
+  import { onMount } from 'svelte';
+  import { listItems } from '../lib/storage/db';
 
   let serviceName = '';
   let url = '';
@@ -13,6 +15,21 @@
   let notes = '';
   let error = '';
   $: current = $session;
+
+  // Autocompletado de categoría
+  let categories: string[] = [];
+  $: catSuggestions = category
+    ? categories.filter((c) => c.toLowerCase().startsWith(category.toLowerCase()) && c.toLowerCase() !== category.toLowerCase())
+    : [];
+
+  onMount(async () => {
+    try {
+      const items = await listItems();
+      const set = new Set<string>();
+      for (const it of items) if (it.category) set.add(it.category);
+      categories = Array.from(set).sort((a, b) => a.localeCompare(b));
+    } catch {}
+  });
 
   async function add() {
     error = '';
@@ -75,7 +92,25 @@
     </div>
     <div>
       <label for="cat" class="block text-sm">Categoría</label>
-      <input id="cat" class="input" bind:value={category} placeholder="Trabajo / Personal" />
+      <input
+        id="cat"
+        class="input"
+        bind:value={category}
+        placeholder="Trabajo / Personal"
+        on:keydown={(e) => {
+          if (e.key === 'Tab' && catSuggestions[0]) {
+            e.preventDefault();
+            category = catSuggestions[0];
+          }
+        }}
+      />
+      {#if catSuggestions.length > 0}
+        <div class="mt-1 flex flex-wrap gap-1 text-xs">
+          {#each catSuggestions.slice(0,5) as s}
+            <button type="button" class="px-2 py-0.5 rounded bg-gray-100 border hover:bg-gray-200" on:click={() => (category = s)}>{s}</button>
+          {/each}
+        </div>
+      {/if}
     </div>
     <div class="md:col-span-2">
       <label for="notes" class="block text-sm">Notas</label>
