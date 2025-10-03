@@ -90,7 +90,7 @@
       <label for="pwd" class="block text-sm">Contraseña</label>
       <input id="pwd" class="input" type="password" bind:value={password} />
     </div>
-    <div>
+    <div class="relative">
       <label for="cat" class="block text-sm">Categoría</label>
       <input
         id="cat"
@@ -104,6 +104,11 @@
           }
         }}
       />
+      {#if category && catSuggestions[0]}
+        <div class="absolute -top-5 left-0 text-xs px-2 py-0.5 rounded border bg-gray-900/90 text-brand-600 border-gray-700 shadow z-10">
+          {catSuggestions[0]}
+        </div>
+      {/if}
       {#if catSuggestions.length > 0}
         <div class="mt-1 flex flex-wrap gap-1 text-xs">
           {#each catSuggestions.slice(0,5) as s}
