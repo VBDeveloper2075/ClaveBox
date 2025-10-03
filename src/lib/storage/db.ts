@@ -17,14 +17,29 @@ let dbPromise: Promise<IDBPDatabase<VaultDB>> | null = null;
 
 export function initDB() {
   if (!dbPromise) {
-    dbPromise = openDB<VaultDB>('clavebox', 1, {
-      upgrade(db) {
+    // Bump a version to ensure index creation even si la store ya existía
+    dbPromise = openDB<VaultDB>('clavebox', 2, {
+      upgrade(db, oldVersion, _newVersion, tx) {
         if (!db.objectStoreNames.contains('meta')) {
           db.createObjectStore('meta', { keyPath: 'key' });
         }
         if (!db.objectStoreNames.contains('items')) {
           const store = db.createObjectStore('items', { keyPath: 'id' });
           store.createIndex('by-updatedAt', 'updatedAt');
+        } else {
+          // Ensure index exists if the store was created in a previous version
+          const store = tx.objectStore('items');
+          let hasIndex = true;
+          try {
+            // will throw if index doesn't exist
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+            (store as any).index('by-updatedAt');
+          } catch {
+            hasIndex = false;
+          }
+          if (!hasIndex) {
+            store.createIndex('by-updatedAt', 'updatedAt');
+          }
         }
       }
     });
@@ -55,5 +70,10 @@ export async function deleteItem(id: string): Promise<void> {
 
 export async function listItems(): Promise<VaultItem[]> {
   const db = await initDB();
-  return await db.getAllFromIndex('items', 'by-updatedAt');
+  try {
+    return await db.getAllFromIndex('items', 'by-updatedAt');
+  } catch {
+    // Fallback si el índice no existe por alguna razón
+    return await db.getAll('items');
+  }
 }
