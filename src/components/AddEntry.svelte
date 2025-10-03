@@ -17,7 +17,8 @@
   $: current = $session;
 
   // Autocompletado de categoría
-  let categories: string[] = [];
+  const defaultCategories = ['Personal', 'Trabajo', 'Finanzas', 'Impuestos', 'Gobierno', 'Compras'];
+  let categories: string[] = [...defaultCategories];
   $: catSuggestions = category
     ? categories.filter((c) => c.toLowerCase().startsWith(category.toLowerCase()) && c.toLowerCase() !== category.toLowerCase())
     : [];
@@ -27,7 +28,9 @@
       const items = await listItems();
       const set = new Set<string>();
       for (const it of items) if (it.category) set.add(it.category);
-      categories = Array.from(set).sort((a, b) => a.localeCompare(b));
+      // Mezclar con defaults y ordenar
+      categories = Array.from(new Set([...defaultCategories, ...set]))
+        .sort((a, b) => a.localeCompare(b));
     } catch {}
   });
 
@@ -66,6 +69,10 @@
       updatedAt: now
     };
     await putItem(item);
+    // Actualizar lista de categorías si es nueva
+    if (category && !categories.includes(category)) {
+      categories = [...categories, category].sort((a, b) => a.localeCompare(b));
+    }
     serviceName = url = username = password = category = notes = '';
     vaultStore.bumpItems();
   }
@@ -105,7 +112,7 @@
         }}
       />
       {#if category && catSuggestions[0]}
-        <div class="absolute -top-5 left-0 text-xs px-2 py-0.5 rounded border bg-gray-900/90 text-brand-600 border-gray-700 shadow z-10">
+        <div class="absolute -top-5 left-0 text-xs px-2 py-0.5 rounded border bg-gray-900/90 text-brand-600 border-gray-700 shadow z-20 pointer-events-none">
           {catSuggestions[0]}
         </div>
       {/if}
