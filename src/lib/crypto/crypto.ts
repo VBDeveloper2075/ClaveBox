@@ -65,20 +65,18 @@ export function generateSalt(bytes = 16): Uint8Array {
 
 export type Cipher = { ciphertext: Uint8Array; nonce: Uint8Array };
 
-export async function encryptJSON(key: CryptoKey, data: unknown, aad?: Uint8Array): Promise<Cipher> {
+export async function encryptJSON(key: CryptoKey, data: unknown): Promise<Cipher> {
   const nonce = new Uint8Array(12);
   crypto.getRandomValues(nonce);
   const plaintext = textEncoder.encode(JSON.stringify(data));
-  const ciphertext = new Uint8Array(
-    await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonce, additionalData: aad }, key, plaintext)
-  );
+  const params: AesGcmParams = { name: 'AES-GCM', iv: nonce };
+  const ciphertext = new Uint8Array(await crypto.subtle.encrypt(params, key, plaintext));
   return { ciphertext, nonce };
 }
 
-export async function decryptJSON<T>(key: CryptoKey, cipher: Cipher, aad?: Uint8Array): Promise<T> {
-  const plain = new Uint8Array(
-    await crypto.subtle.decrypt({ name: 'AES-GCM', iv: cipher.nonce, additionalData: aad }, key, cipher.ciphertext)
-  );
+export async function decryptJSON<T>(key: CryptoKey, cipher: Cipher): Promise<T> {
+  const params: AesGcmParams = { name: 'AES-GCM', iv: cipher.nonce };
+  const plain = new Uint8Array(await crypto.subtle.decrypt(params, key, cipher.ciphertext));
   return JSON.parse(textDecoder.decode(plain)) as T;
 }
 
