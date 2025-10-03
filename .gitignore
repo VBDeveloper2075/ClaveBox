@@ -1,0 +1,26 @@
+# Node
+node_modules/
+.pnpm-store/
+
+# Builds
+build/
+dist/
+.svelte-kit/
+.vite/
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+supabase/.temp/
+
+# Editors
+.vscode/
+.idea/
+.DS_Store
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

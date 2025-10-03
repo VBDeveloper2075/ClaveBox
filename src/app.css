@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base light/dark bodies */
+body {
+  @apply antialiased bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100;
+}
+
+.button {
+  @apply inline-flex items-center justify-center rounded-md bg-brand-600 text-white px-4 py-2 text-sm font-medium hover:bg-brand-700 transition disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.input {
+  @apply block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 dark:bg-gray-900 dark:border-gray-800;
+}
+
+.card {
+  @apply rounded-xl bg-white shadow-sm border border-gray-200 dark:bg-gray-900/70 dark:border-gray-800;
+}
+
+.sidebar {
+  @apply w-64 bg-gray-900/60 border-r border-gray-800 p-4 space-y-2 hidden md:block;
+}
+
+.nav-item {
+  @apply flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-300 hover:text-white hover:bg-gray-800 transition;
+}
+
+.tab {
+  @apply px-3 py-1.5 rounded-md text-sm text-gray-300 hover:text-white hover:bg-gray-800 cursor-pointer;
+}
+
+.table {
+  @apply w-full text-sm;
+}
+.thead {
+  @apply text-xs uppercase text-gray-400 border-b border-gray-800;
+}
+.tr {
+  @apply border-b border-gray-800 hover:bg-gray-900/50;
+}
+.td, .th {
+  @apply px-3 py-2 text-left align-middle;
+}
