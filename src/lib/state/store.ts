@@ -11,7 +11,8 @@ export const itemsVersion = writable(0);
 function createVaultStore() {
   return {
     lock() {
-      session.set({ unlocked: false });
+      // Clear derived keys explicitly on lock
+      session.set({ unlocked: false, derived: undefined });
     },
     unlock() {
       session.set({ unlocked: true });
