@@ -6,7 +6,7 @@ ClaveBox es una aplicación web (PWA) de gestión de contraseñas y cuentas con 
 - 🔐 Seguridad real: Argon2id + AES‑GCM en cliente.
 - 🧠 Simple y rápida: diseño minimalista, búsqueda omnibox.
 - 📱 Multiplataforma: funciona en desktop y móvil (PWA).
-- ☁️ Sync opcional: Supabase solo almacena blobs cifrados.
+
 
 ---
 
@@ -21,10 +21,11 @@ ClaveBox es una aplicación web (PWA) de gestión de contraseñas y cuentas con 
 ---
 
 ## 🧭 Estado actual
-- 🧱 Estructura de proyecto creada (Svelte + Vite + Tailwind + TS)
-- 🔐 Módulos de cifrado y almacenamiento local listos (base)
-- 🧩 Conector Supabase preparado para blobs cifrados
-- 🖥️ UI mínima: Login, Lista y Generador (esqueleto)
+- 🔐 Cifrado extremo a extremo en el navegador
+- 💾 Almacenamiento local seguro (sin cuentas, sin servidores)
+- 📝 CRUD completo: crear, editar, copiar y eliminar
+- 🔎 Búsqueda lateral con resultados instantáneos
+- 🔧 Generador de contraseñas potente
 
 ---
 
@@ -41,61 +42,49 @@ npm run dev
 ```
 Abre http://localhost:5173
 
-### 🌐 Variables de entorno (opcional Sync)
-Copia `.env.example` a `.env` y completa:
-```
-VITE_SUPABASE_URL=...
-VITE_SUPABASE_ANON_KEY=...
-```
+### 🌐 Variables de entorno
+No es necesario configurar variables para usar ClaveBox. Funciona 100% en tu navegador.
 
-### ▶️ Flujo de uso
-1) Ingresa una **Frase Maestra** (guárdala bien; no se puede recuperar).
-2) Crea entradas: sitio, usuario, contraseña, notas seguras, TOTP.
-3) Activa Sync (opcional) para respaldar tus datos como blobs cifrados.
+### ▶️ Cómo usar
+1) Ingresa una **Frase Maestra** (es tu llave; no se recupera).
+2) Crea entradas: servicio, usuario, contraseña y notas.
+3) Usa el buscador lateral para encontrar rápido y el botón copiar para pegar donde necesites.
 
 ---
 
-## 🏗️ Arquitectura
-- Frontend: Svelte + TypeScript + Tailwind (PWA).
-- Crypto: WebCrypto (AES‑GCM) + Argon2id (WASM `argon2-browser`).
-- Local: IndexedDB (`idb`).
-- Sync: Supabase (Postgres/Storage) como repositorio de blobs cifrados.
+## 🏗️ Arquitectura (en una frase)
+Aplicación web ligera que cifra todo en tu dispositivo y guarda localmente. No enviamos tus secretos a ningún servidor.
 
-```
-[Frase Maestra]
-   └─Argon2id──▶ [Clave de bóveda]
-                      ├─▶ AES‑GCM cifrar/descifrar ítems
-                      └─▶ Claves derivadas para índices/compartición
-
-[IndexedDB] ◀── blobs cifrados ──▶ [Supabase]
-```
+Beneficios para ti y tu equipo:
+- **Privacidad total**: tus contraseñas nunca salen en claro.
+- **Rápida y sin fricción**: funciona offline, sin registros ni contraseñas maestras guardadas.
+- **Control local**: tus datos están en tu dispositivo; tú decides si exportas un respaldo.
 
 ---
 
-## 🔒 Diseño de seguridad
-- Derivación: Argon2id (mem configurable) + sal aleatoria por bóveda.
-- Cifrado: AES‑GCM 256‑bit, nonce único por registro, AAD con metadatos mínimos.
-- Claves separadas: contenido e índices (evita filtración lateral).
-- Zero‑Knowledge: el backend nunca recibe tu frase ni claves.
-- Limpieza: auto‑bloqueo por inactividad y borrado de claves de memoria.
+## 🔒 Seguridad (alto nivel)
+- Derivación robusta de clave a partir de tu Frase Maestra.
+- Cifrado autenticado por ítem con claves efímeras.
+- Cierre de bóveda borra claves de la memoria.
+- Política de contenido del sitio que limita ejecución y orígenes.
 
 > Nota: no subas tu `.env` ni datos en claro a ningún repositorio. `.gitignore` ya lo bloquea.
 
 ---
 
-## 🖼️ UI y experiencia
-- Inicio: un solo campo (Frase Maestra) + Acceder / Passkey (futuro)
-- Lista: tarjetas con favicon, usuario, copiar en un clic
-- Generador: longitud, A‑Z, a‑z, 0‑9, símbolos, evitar ambiguos
-- Colecciones: etiquetas Trabajo / Personal / Bancos (futuro)
+## 🖼️ Experiencia
+- Inicio simple: ingresa tu Frase Maestra y accede.
+- Lista clara: ver servicio, usuario y enlaces.
+- Acciones rápidas: copiar, editar y eliminar en un toque.
+- Generador de contraseñas siempre a mano.
 
 ---
 
 ## 🧩 Roadmap
-- [ ] Passkeys/WebAuthn para login sin frase
+- [ ] Passkeys/WebAuthn
 - [ ] Extensión de navegador (autocompletar)
-- [ ] Compartición segura E2EE entre cuentas
-- [ ] Auditoría de contraseñas débiles/repetidas
+- [ ] Compartición segura E2EE
+- [ ] Auditoría de contraseñas
 - [ ] Exportación/Importación cifrada
 
 ---

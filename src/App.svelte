@@ -37,14 +37,13 @@
           </div>
           <div class="space-y-6">
             <SearchPanel />
+            <div class="card p-4">
+              <h2 class="font-medium mb-2">Generador de Contraseñas</h2>
+              <PasswordGenerator />
+            </div>
           </div>
         </div>
-        <div class="fixed right-4 bottom-4 z-40 w-full max-w-sm">
-          <div class="card p-4 shadow-xl">
-            <h2 class="font-medium mb-2">Generador de Contraseñas</h2>
-            <PasswordGenerator />
-          </div>
-        </div>
+        
       {/if}
     </div>
   </main>

@@ -138,8 +138,8 @@
       <div class="text-sm text-red-600">{errorMsg}</div>
     {/if}
     {#each items as item}
-      <div class="card p-4 flex items-center justify-between gap-4">
-        <div class="min-w-0">
+      <div class="card p-4">
+        <div class="min-w-0 flex items-start justify-between gap-4">
           <div class="font-medium truncate">{item.serviceName}</div>
           <div class="text-sm text-gray-500 flex gap-2 items-center">
             {#if item.username}<span class="truncate">{item.username}</span>{/if}
@@ -147,7 +147,7 @@
             {#if item.category}<span class="px-2 py-0.5 rounded bg-gray-100 border text-gray-600">{item.category}</span>{/if}
           </div>
         </div>
-        <div class="flex items-center gap-1">
+        <div class="mt-2 flex items-center gap-1">
           <button class="button px-2 py-1" aria-label="Editar" title="Editar" on:click={() => openEdit(item)}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/>
@@ -168,7 +168,7 @@
             {/if}
           </button>
         </div>
-        <div class="text-xs text-gray-400 shrink-0">{new Date(item.updatedAt).toLocaleString()}</div>
+        <div class="mt-1 text-xs text-gray-400">{new Date(item.updatedAt).toLocaleString()}</div>
       </div>
     {/each}
   {/if}

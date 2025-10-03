@@ -1,5 +1,6 @@
-import { openDB, DBSchema, IDBPDatabase } from 'idb';
+import { openDB, type IDBPDatabase, type DBSchema } from 'idb';
 import type { VaultItem } from '../types';
+import { u8ToB64, b64ToU8 } from '../crypto/crypto';
 
 interface VaultDB extends DBSchema {
   meta: {
@@ -76,4 +77,79 @@ export async function listItems(): Promise<VaultItem[]> {
     // Fallback si el índice no existe por alguna razón
     return await db.getAll('items');
   }
+}
+
+// --- Export / Import ---
+type ExportedItem = Omit<VaultItem, 'ciphertext' | 'nonce'> & {
+  ciphertextB64: string;
+  nonceB64: string;
+};
+
+type VaultExport = {
+  schemaVersion: 1;
+  exportedAt: number;
+  meta: { saltB64: string | null };
+  items: ExportedItem[];
+};
+
+export async function exportVaultJSON(): Promise<string> {
+  const db = await initDB();
+  const items = await db.getAll('items');
+  const salt = await getSaltB64();
+  const payload: VaultExport = {
+    schemaVersion: 1,
+    exportedAt: Date.now(),
+    meta: { saltB64: salt },
+    items: items.map((it) => ({
+      ...it,
+      ciphertextB64: u8ToB64(it.ciphertext),
+      nonceB64: u8ToB64(it.nonce)
+    }))
+  };
+  // Remove binary fields from spread result
+  for (const e of payload.items) {
+    // @ts-ignore
+    delete (e as any).ciphertext;
+    // @ts-ignore
+    delete (e as any).nonce;
+  }
+  return JSON.stringify(payload, null, 2);
+}
+
+async function clearAllItems(db: IDBPDatabase<VaultDB>) {
+  await db.clear('items');
+}
+
+export async function importVaultJSON(jsonText: string, mode: 'merge' | 'replace' = 'merge') {
+  const parsed = JSON.parse(jsonText) as VaultExport;
+  if (!parsed || parsed.schemaVersion !== 1 || !Array.isArray(parsed.items)) {
+    throw new Error('Archivo de importación inválido.');
+  }
+  const db = await initDB();
+  if (mode === 'replace') {
+    await clearAllItems(db);
+  }
+  let imported = 0;
+  let skipped = 0;
+  for (const e of parsed.items) {
+    try {
+      const item: VaultItem = {
+        id: e.id,
+        serviceName: e.serviceName,
+        url: e.url,
+        username: e.username,
+        category: e.category,
+        notes: e.notes,
+        ciphertext: b64ToU8(e.ciphertextB64),
+        nonce: b64ToU8(e.nonceB64),
+        createdAt: e.createdAt,
+        updatedAt: e.updatedAt
+      };
+      await db.put('items', item);
+      imported++;
+    } catch {
+      skipped++;
+    }
+  }
+  return { imported, skipped };
 }
