@@ -67,7 +67,7 @@
       items = await listItems();
     } catch (err) {
       console.error(err);
-      errorMsg = 'No se pudo importar.';
+      errorMsg = `No se pudo importar: ${err instanceof Error ? err.message : ''}`.trim();
     }
     input.value = '';
   }
