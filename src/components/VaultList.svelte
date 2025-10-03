@@ -2,21 +2,12 @@
   import { onMount } from 'svelte';
   import { listItems, deleteItem, putItem } from '../lib/storage/db';
   import type { VaultItem } from '../lib/types';
-  import { itemsVersion, session, vaultStore, searchQuery } from '../lib/state/store';
+  import { itemsVersion, session, vaultStore } from '../lib/state/store';
   import { decryptJSON, encryptJSON } from '../lib/crypto/crypto';
 
   let items: VaultItem[] = [];
   let loading = true;
   $: version = $itemsVersion;
-  $: q = $searchQuery.trim().toLowerCase();
-  $: visible = q
-    ? items.filter((i) =>
-        (i.serviceName || '').toLowerCase().includes(q) ||
-        (i.username || '').toLowerCase().includes(q) ||
-        (i.url || '').toLowerCase().includes(q) ||
-        (i.category || '').toLowerCase().includes(q)
-      )
-    : items;
 
   // UI feedback state
   let copyingId: string | null = null;
@@ -146,7 +137,7 @@
     {#if errorMsg}
       <div class="text-sm text-red-600">{errorMsg}</div>
     {/if}
-    {#each visible as item}
+    {#each items as item}
       <div class="card p-4 flex items-center justify-between gap-4">
         <div class="min-w-0">
           <div class="font-medium truncate">{item.serviceName}</div>

@@ -3,6 +3,7 @@
   import Login from './components/Login.svelte';
   import VaultList from './components/VaultList.svelte';
   import PasswordGenerator from './components/PasswordGenerator.svelte';
+  import SearchPanel from './components/SearchPanel.svelte';
   import AddEntry from './components/AddEntry.svelte';
   import { session, vaultStore, searchQuery } from './lib/state/store';
   import { initDB } from './lib/storage/db';
@@ -25,22 +26,24 @@
   </header>
 
   <main class="flex-1">
-    <div class="mx-auto max-w-5xl px-4 py-6 space-y-6">
+    <div class="mx-auto max-w-5xl px-4 py-6">
       {#if !$session.unlocked}
         <Login />
       {:else}
-        <div class="card p-3">
-          <input
-            class="input w-full"
-            placeholder="Buscar por servicio, usuario, URL o categoría"
-            bind:value={$searchQuery}
-          />
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 space-y-6">
+            <AddEntry />
+            <VaultList />
+          </div>
+          <div class="space-y-6">
+            <SearchPanel />
+          </div>
         </div>
-        <AddEntry />
-        <VaultList />
-        <div class="card p-4">
-          <h2 class="font-medium mb-2">Generador de Contraseñas</h2>
-          <PasswordGenerator />
+        <div class="fixed right-4 bottom-4 z-40 w-full max-w-sm">
+          <div class="card p-4 shadow-xl">
+            <h2 class="font-medium mb-2">Generador de Contraseñas</h2>
+            <PasswordGenerator />
+          </div>
         </div>
       {/if}
     </div>
