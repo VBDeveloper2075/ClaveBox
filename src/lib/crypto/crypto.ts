@@ -10,17 +10,11 @@ export async function deriveKeys(passphrase: string, salt: Uint8Array): Promise<
 
   // Dynamic import to support different module shapes (named/default)
   let argon2Hash: any = undefined;
+  // Import ONLY the bundled build to avoid Vite trying to resolve argon2.wasm and Node APIs
   try {
-    const m: any = await import('argon2-browser');
-    argon2Hash = m && (m.hash || m.default?.hash || m.default);
+    const m2: any = await import('argon2-browser/dist/argon2-bundled.min.js');
+    argon2Hash = m2 && (m2.hash || m2.default?.hash || m2.default);
   } catch {}
-  // If not a function yet, try the bundled build
-  if (typeof argon2Hash !== 'function') {
-    try {
-      const m2: any = await import('argon2-browser/dist/argon2-bundled.min.js');
-      argon2Hash = m2 && (m2.hash || m2.default?.hash || m2.default);
-    } catch {}
-  }
   let full: Uint8Array;
   if (typeof argon2Hash === 'function') {
     const res = await argon2Hash({
