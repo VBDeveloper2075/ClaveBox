@@ -107,7 +107,10 @@
       {#if catSuggestions.length > 0}
         <div class="mt-1 flex flex-wrap gap-1 text-xs">
           {#each catSuggestions.slice(0,5) as s}
-            <button type="button" class="px-2 py-0.5 rounded bg-gray-100 border hover:bg-gray-200" on:click={() => (category = s)}>{s}</button>
+            <button
+              type="button"
+              class="px-2 py-0.5 rounded border text-brand-600 border-brand-200 hover:bg-brand-50"
+              on:click={() => (category = s)}>{s}</button>
           {/each}
         </div>
       {/if}
