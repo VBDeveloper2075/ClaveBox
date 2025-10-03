@@ -24,13 +24,22 @@
       error = 'Completa al menos Servicio y Contraseña';
       return;
     }
+    // Normalizaciones
+    serviceName = serviceName.trim();
+    username = username.trim();
+    category = category.trim();
+    notes = notes.trim();
+    let finalUrl = url.trim();
+    if (finalUrl && !/^https?:\/\//i.test(finalUrl)) {
+      finalUrl = `https://${finalUrl}`;
+    }
     const now = Date.now();
     const payload = { password }; // solo ciframos la contraseña en este MVP
     const { ciphertext, nonce } = await encryptJSON(current.derived.contentKey, payload);
     const item: VaultItem = {
       id: uuidv4(),
       serviceName,
-      url: url || undefined,
+      url: finalUrl || undefined,
       username: username || undefined,
       category: category || undefined,
       notes: notes || undefined,
