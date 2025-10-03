@@ -8,6 +8,9 @@ export const session = writable<VaultSession>({
 // Version para notificar cambios en la lista de items
 export const itemsVersion = writable(0);
 
+// Búsqueda global de items
+export const searchQuery = writable('');
+
 function createVaultStore() {
   return {
     lock() {
