@@ -4,6 +4,7 @@
   import type { VaultItem } from '../lib/types';
   import { itemsVersion, searchQuery, session } from '../lib/state/store';
   import { decryptJSON } from '../lib/crypto/crypto';
+  import ChangePassphrase from './ChangePassphrase.svelte';
 
   let items: VaultItem[] = [];
   let loading = true;
@@ -149,4 +150,6 @@
       </div>
     {/if}
   {/if}
+
+  <ChangePassphrase />
 </div>

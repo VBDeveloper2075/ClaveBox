@@ -15,22 +15,18 @@
       return;
     }
     try {
-      // Obtener o crear salt real
       let saltB64 = await getSaltB64();
       if (!saltB64) {
         const salt = generateSalt(16);
         saltB64 = u8ToB64(salt);
         await setSaltB64(saltB64);
-        session.set({ unlocked: true, derived });
       }
       const salt = b64ToU8(saltB64);
-      // Derivar claves (Argon2id o fallback PBKDF2)
       const derived = await deriveKeys(masterPhrase, salt);
-      // Guardar sesión desbloqueada con claves derivadas
       session.set({ unlocked: true, derived });
       masterPhrase = '';
-    
-    vaultStore.unlock(); // Esto inicia el auto-lock timer
+
+      vaultStore.unlock();
     } catch (e) {
       console.error(e);
       error = 'No se pudo derivar la clave. Recarga la página e inténtalo de nuevo.';

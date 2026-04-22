@@ -59,6 +59,18 @@ export async function setSaltB64(b64: string): Promise<void> {
   await db.put('meta', { key: 'salt', value: b64 });
 }
 
+/** Escribe salt y todos los ítems en una sola transacción (cambio de frase maestra). */
+export async function commitVaultRekey(newSaltB64: string, items: VaultItem[]): Promise<void> {
+  const db = await initDB();
+  const tx = db.transaction(['meta', 'items'], 'readwrite');
+  await tx.objectStore('meta').put({ key: 'salt', value: newSaltB64 });
+  const itemStore = tx.objectStore('items');
+  for (const item of items) {
+    itemStore.put(item);
+  }
+  await tx.done;
+}
+
 export async function putItem(item: VaultItem): Promise<void> {
   const db = await initDB();
   await db.put('items', item);
